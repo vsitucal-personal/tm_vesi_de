@@ -1,0 +1,31 @@
+FROM jupyter/base-notebook
+
+USER root
+ENV JUPYTER_TOKEN=""
+
+WORKDIR /home/jovyan
+COPY . .
+
+RUN apt-get update
+RUN apt-get install default-jre -y
+RUN apt-get install scala -y
+RUN wget http://archive.apache.org/dist/spark/spark-3.5.3/spark-3.5.3-bin-hadoop3.tgz
+RUN wget https://jdbc.postgresql.org/download/postgresql-42.7.4.jar
+RUN sudo tar -zxvf spark-3.5.3-bin-hadoop3.tgz
+
+RUN pip install jupyterlab pyspark pandas numpy matplotlib\
+    notebook jupyterlab-execute-time python-decouple
+
+RUN mkdir -p /home/jovyan/.jupyter && \
+    HASHED_PASS=$(python3 -c "from jupyter_server.auth import passwd; print(passwd('1234'))") && \
+    echo "c.ServerApp.password = '$HASHED_PASS'" > /home/jovyan/.jupyter/jupyter_server_config.py
+
+ENV PYTHONPATH=.
+ENV SPARK_HOME=/home/jovyan/spark-3.5.3-bin-hadoop3
+ENV PATH=$SPARK_HOME:$PATH
+ENV PYTHONPATH=$SPARK_HOME/python:$PYTHONPATH
+
+EXPOSE 8888
+EXPOSE 4040
+
+CMD ["jupyter", "lab", "--ip=0.0.0.0", "--port=8888", "--no-browser", "--allow-root"]
