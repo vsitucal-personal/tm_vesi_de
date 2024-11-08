@@ -1,7 +1,11 @@
 FROM python:3.9-slim
 
 USER root
-COPY . .
+ARG src="./Part 2/"
+ARG target="."
+
+COPY ${src} ${target}
+
 
 WORKDIR .
 RUN apt-get update
@@ -10,12 +14,13 @@ RUN pip install uvicorn fastapi psycopg2-binary \
     pydantic python-decouple pytest pytest-cov httpx
 
 ENV PYTHONPATH=.
-ENV DB_HOST=postgres
-ENV DB_PORT=5432
-ENV DB_NAME=postgres
-ENV DB_USER=postgres
-ENV DB_PASS=1234
+ENV DB_HOST=xxx
+ENV DB_PORT=xxx
+ENV DB_NAME=xxx
+ENV DB_USER=xxx
+ENV DB_PASS=xxx
 
 RUN pytest -vv tests/ --cov=app --cov-report=html
+WORKDIR htmlcov
 
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "80"]
+CMD ["python3", "-m",  "http.server", "8000"]

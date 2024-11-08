@@ -1,7 +1,9 @@
 FROM jupyter/base-notebook
 
 USER root
-ENV JUPYTER_TOKEN=""
+ARG jup_token
+
+ENV JUPYTER_TOKEN=${jup_token}
 
 WORKDIR /home/jovyan
 COPY . .
@@ -16,8 +18,11 @@ RUN sudo tar -zxvf spark-3.5.3-bin-hadoop3.tgz
 RUN pip install jupyterlab pyspark pandas numpy matplotlib\
     notebook jupyterlab-execute-time python-decouple
 
+ARG jup_pass
+
+# Create the .jupyter directory and generate the hashed password from the jup_pass argument
 RUN mkdir -p /home/jovyan/.jupyter && \
-    HASHED_PASS=$(python3 -c "from jupyter_server.auth import passwd; print(passwd('1234'))") && \
+    HASHED_PASS=$(python3 -c "from jupyter_server.auth import passwd; print(passwd('$jup_pass'))") && \
     echo "c.ServerApp.password = '$HASHED_PASS'" > /home/jovyan/.jupyter/jupyter_server_config.py
 
 ENV PYTHONPATH=.

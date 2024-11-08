@@ -1,9 +1,11 @@
 # Dockerfile for PostgreSQL
 FROM postgres:13
 
+ARG DB_PASS
+
 # Set environment variables for PostgreSQL
 ENV POSTGRES_USER=postgres
-ENV POSTGRES_PASSWORD=1234
+ENV POSTGRES_PASSWORD=$DB_PASS
 ENV POSTGRES_DB=postgres
 
 # Expose the PostgreSQL port

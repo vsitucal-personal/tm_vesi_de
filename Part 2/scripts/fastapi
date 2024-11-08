@@ -8,7 +8,10 @@ RUN pip install uvicorn fastapi psycopg2-binary \
     pydantic python-decouple
 
 # Copy the FastAPI app code
-COPY . .
+ARG src="./Part 2/"
+ARG target="."
+
+COPY ${src} ${target}
 
 # Expose the FastAPI port
 EXPOSE 80

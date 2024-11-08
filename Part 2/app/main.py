@@ -1,3 +1,5 @@
+import math
+
 from fastapi import FastAPI, Depends
 from typing import List
 from app.repository.db import DBConnect
@@ -21,7 +23,13 @@ class Webserver:
         ):
             records, records_len = self.db.get_checkins_records(params.user, params.page, params.page_size)
             record_count = self.db.get_checkins_count(params.user)
-            return ReturnCheckin(total_count=record_count, returned_count=records_len, records=records)
+            return ReturnCheckin(
+                total_count=record_count,
+                page=params.page,
+                max_page=math.ceil(record_count/params.page_size),
+                returned_count=records_len,
+                records=records
+            )
 
 
 webserver = Webserver()

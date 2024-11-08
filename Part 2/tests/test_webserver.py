@@ -42,6 +42,8 @@ def test_get_checkins():
     expected_response = {
         "total_count": 1,
         "returned_count": 1,
+        "max_page": 1,
+        "page": 1,
         "records": [
             json.loads(CheckinsModel(user="testuser", date=now.strftime("%Y-%m-%d"), project="xxx", hours=4.5).json())
         ]

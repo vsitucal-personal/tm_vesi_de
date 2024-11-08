@@ -29,7 +29,7 @@ class DBConnect:
             LIMIT %s OFFSET %s;
         """
         cursor = self.conn.cursor()
-        cursor.execute(query, (user, page_size, page))
+        cursor.execute(query, (user, page_size, (page-1)*page_size))
         rows = cursor.fetchall()
         columns = [desc[0] for desc in cursor.description]
         result = [CheckinsModel(**dict(zip(columns, row))) for row in rows]
